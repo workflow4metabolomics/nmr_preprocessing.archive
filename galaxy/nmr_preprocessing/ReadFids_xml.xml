@@ -1,4 +1,4 @@
-<tool id="NMR_Read" name="NMR_Read" version="2016-12-29">
+<tool id="NMR_Read" name="NMR_Read" version="0.1.0">
 	<description> Read NMR raw files</description>
 
 	
@@ -180,5 +180,15 @@ Example
 
 
    </help>
+
+   <citations>
+        <citation type="bibtex">@ARTICLE{Kim07aninterior-point,
+   author = {R. Rousseau},
+   title = {Statistical contribution to the analysis of metabonomic data in 1H-NMR spectroscopy},
+   journal = {Ph.D. Thesis},
+   year = {2011}
+        }</citation>
+        <citation type="doi">10.1093/bioinformatics/btu813</citation>
+    </citations>
     
 </tool>
