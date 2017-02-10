@@ -12,9 +12,9 @@
 
 		## First order phase correction
 			## Data matrix of FID spectra
-		dataMatrixFid $dataMatrixFid
+		dataMatrixFid '$dataMatrixFid'
 			## Sample metadata matrix
-		sampleMetadataFid $sampleMetadataFid
+		sampleMetadataFid '$sampleMetadataFid'
 
 		
 		## Water and / or solvents suppression
@@ -104,7 +104,7 @@
 		--maxIter $BaselineCorr.maxIter
 		--lambdaBc $BaselineCorr.lambdaBc
 		--pBc $BaselineCorr.pBc
-		-epsilon $BaselineCorr.epsilon
+		--epsilon $BaselineCorr.epsilon
 		
 		
 		## sets negative intensities to zero
@@ -112,9 +112,9 @@
 				
 		
         ## Outputs
-        dataMatrixOut $dataMatrixOut
-		graphOut $graphOut
-		logOut $logOut
+        dataMatrixOut '$dataMatrixOut'
+		graphOut '$graphOut'
+		logOut '$logOut'
 		
 	</command>
 		
