@@ -1,5 +1,12 @@
 <tool id="NMR_Preprocessing" name="NMR_Preprocessing" version="2017-01-17">
 	<description> Preprocessing of 1D NMR spectra </description>
+
+	 <requirements>
+        <requirement type="package" version="3.1.2">R</requirement>
+	    <requirement type="package" version="1.1_4">r-batch</requirement>
+	    <requirement type="package" version="1.2.1">r-speaq</requirement>
+  	</requirements>
+
 	
     <stdio>
         <exit_code range="1:" level="fatal" />
