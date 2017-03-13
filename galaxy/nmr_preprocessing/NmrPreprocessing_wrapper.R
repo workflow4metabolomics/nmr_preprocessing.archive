@@ -26,12 +26,12 @@ rownames(ip) <- NULL
 ip <- ip[is.na(ip$Priority),1:2,drop=FALSE]
 # print(ip, row.names=FALSE)
 
-library(batch)
-library(ptw)
-library(Matrix)
-library(ggplot2)
-library(gridExtra)
-library(reshape2)
+# library(batch)
+# library(ptw)
+# library(Matrix)
+# library(ggplot2)
+# library(gridExtra)
+# library(reshape2)
 
 
 # R script call
