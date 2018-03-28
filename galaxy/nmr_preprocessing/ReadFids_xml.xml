@@ -1,79 +1,75 @@
-<tool id="NMR_Read" name="NMR_Read" version="2016-12-29">
-	<description> Read NMR raw files</description>
+<tool id="NMR_Read" name="NMR_Read" version="@WRAPPER_VERSION@">
+    <description> Read Bruker NMR raw files</description>
 
-	
-    <stdio>
-        <exit_code range="1:" level="fatal" />
-    </stdio>
-	
-  	<command>
-  	    ## Wrapper
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+
+    <expand macro="requirements" />
+
+    <expand macro="stdio"/>
+
+    <command>
+        ## Wrapper
         Rscript $__tool_directory__/ReadFids_wrapper.R
 
-		## File input
-        #if $inputs.input == "FID":
-            fidzipfile $inputs.fidzipfile
-        #elif $inputs.input == "Jcamp-dx":
-            jcampzipfile $inputs.jcampzipfile
-        #end if
-		
-		## Title line
-		title_line $title_line
-		
-		## Subdirectories
-		subdirectories $subdirectories
+        ## File input
+        fidzipfile $fidzipfile
+
+        ## Title line
+        title_line $title_line
+
+        ## Subdirectories
+        subdirectories $subdirectories
+
+        ## Use subdirectories names as FID names?
+        dirs_names $dirs_names
 
         ## Outputs
-        dataMatrixOut $dataMatrixOut
-        sampleOut $sampleOut
+        dataMatrix $dataMatrix
+        sampleMetadata $sampleMetadata
         logOut $logOut
         graphOut $graphOut
-		
-	</command>
-		
-  	<inputs>
-        <conditional name="inputs">
-            <param name="input" type="select" label="Choose your inputs method" >
-                <option value="FID" selected="true"> FID Bruker files</option>
-                <option value="Jcamp-dx"> Jcamp-dx files</option>
-            </param>
-            <when value="FID">
-                <param name="fidzipfile" type="data" format="no_unzip.zip" label="FID file" />
-            </when>
-            <when value="Jcamp-dx">
-                <param name="jcampzipfile" type="data" format="no_unzip.zip" label="Jcamp-dx file" />
-            </when>
-        </conditional>
-        
-		<param name="title_line" label="FID title" type="integer" value="1" size="100" help="Default value is line 1"/>
 
-        <param name="subdirectories" label="Presence of subdirectories" type="select" help="Select 'No' when ...,'Yes' when ... ">
+    </command>
+
+    <inputs>
+        <param name="fidzipfile" type="data" format="no_unzip.zip" label="Bruker FID file" />
+        <param name="title_line" label="Specify the line in the title file to recover the FID names (usually in pdata/1/title)" type="integer" value="1" size="100" help="Default value is line 1"/>
+
+        <param name="subdirectories" label="Presence of subdirectories?" type="select" help="Select 'FALSE' when there is no subdirectories, 'TRUE' if there are subdirectories">
             <option value="FALSE"> FALSE </option>
             <option value="TRUE"> TRUE </option>
         </param>
 
-	</inputs>	
-	
-	
-	<outputs>
-	
-		<data format="tabular" name="dataMatrixOut" label="${tool.name}_dataMatrixOut" />
-		<data format="tabular" name="sampleOut" label="${tool.name}_sampleMetadataOut" />
-		<data format="txt" name="logOut" label="${tool.name}_log" />
-		<data format="pdf" name="graphOut" label="${tool.name}_graph" />
-		 
-	</outputs>
+        <param name="dirs_names" label="Use (sub)directories names as FID names?" type="select" help="Select 'TRUE' to use the subdirectories names as the FID names (instead of looking in the title file)">
+            <option value="FALSE"> FALSE </option>
+            <option value="TRUE"> TRUE </option>
+        </param>
+    </inputs>
 
-	<help>
+    <outputs>
+        <data format="tabular" name="dataMatrix" label="${tool.name}_dataMatrix" />
+        <data format="tabular" name="sampleMetadata" label="${tool.name}_sampleMetadata" />
+        <data format="txt" name="logOut" label="${tool.name}_log" />
+        <data format="pdf" name="graphOut" label="${tool.name}_graph" />
+    </outputs>
 
-.. class:: infomark
 
-**Authors** Manon Martin (manon.martin@uclouvain.be)
+    <tests>
+        <test>
+          <param name="fidzipfile" value="MTBLS1.zip" ftype="zip" />
+          <param name="title_line" value="1" />
+          <param name="subdirectories" value="TRUE" />
+          <param name="dirs_names" value="TRUE" />
 
-.. class:: infomark
+          <output name="dataMatrix" value="NMR_ReadFids_dataMatrix.tabular" />
+        </test>
+    </tests>
 
-**Please cite**
-R. Rousseau. Statistical contribution to the analysis of metabonomic data in 1H-NMR spectroscopy. 2011. Ph.D. Thesis
+    <help>
+
+@HELP_AUTHORS@
 
 
 =============
@@ -84,7 +80,7 @@ NMR Read
 Description
 -----------
 
-Nuclear Magnetic Resonance files reading (from the R 'SOAP' package)
+Nuclear Magnetic Resonance Bruker files reading (from the PEPS-NMR R package (https://github.com/ManonMartin/PEPSNMR))
 
 -----------------
 Workflow position
@@ -101,27 +97,29 @@ NA                        NA                NA
 
 **Downstream tools**
 
-+---------------------------+----------------------+--------+
-| Name                      | Output file          | Format |
-+===========================+======================+========+
-|NMR_PreProcessing          | dataMatrix.tsv       | Tabular|
-+---------------------------+----------------------+--------+
-|                           | sampleMetadata.tsv   | Tabular|
-+---------------------------+----------------------+--------+
-|                           | variableMetadata.tsv | Tabular|
-+---------------------------+----------------------+--------+
-|NMR_Alignement             | dataMatrix.tsv       | Tabular|
-+---------------------------+----------------------+--------+
-|NMR_Bucketing              | dataMatrix.tsv       | Tabular|
-+---------------------------+----------------------+--------+
-|Normalization              | dataMatrix.tsv       | Tabular|
-+---------------------------+----------------------+--------+
-|Univariate                 | variableMetadata.tsv | Tabular|
-+---------------------------+----------------------+--------+
-|Multivariate               | sampleMetadata.tsv   | Tabular|
-+---------------------------+----------------------+--------+
-|                           | variableMetadata.tsv | Tabular|
-+---------------------------+----------------------+--------+
++-----------------------+--------------------------+--------+
+| Name                  | Output file              | Format |
++=======================+==========================+========+
+|NMR_Preprocessing      | dataMatrix               | Tabular|
++-----------------------+--------------------------+--------+
+|NMR_Preprocessing      |  sampleMetadata          | Tabular|
++-----------------------+--------------------------+--------+
+|NMR_Preprocessing      |     NMR_Read_log         | TXT    |
++-----------------------+--------------------------+--------+
+|NMR_Preprocessing      |     NMR_Read_graph       | PDF    |
++-----------------------+--------------------------+--------+
+|NMR_Alignement         |     dataMatrix           | Tabular|
++-----------------------+--------------------------+--------+
+|NMR_Bucketing          |     dataMatrix           | Tabular|
++-----------------------+--------------------------+--------+
+|Normalization          |     dataMatrix           | Tabular|
++-----------------------+--------------------------+--------+
+|Univariate             |     variableMetadata     | Tabular|
++-----------------------+--------------------------+--------+
+|Multivariate           |     sampleMetadata       | Tabular|
++-----------------------+--------------------------+--------+
+|                       |     variableMetadata     | Tabular|
++-----------------------+--------------------------+--------+
 
 
 -----------
@@ -131,54 +129,83 @@ Input files
 +---------------------------+-----------------+
 | Parameter : num + label   |   Format        |
 +===========================+=================+
-| 1 : Choose your inputs    |   FID           |
+| 1 : Choose your inputs    |     zip         |
 +---------------------------+-----------------+
-| 1 : Choose your inputs    |   Jcamp-dx      |
-+---------------------------+-----------------+
+
 
 **Choose your inputs**
 
-    | Zip file (recommended) of FID Bruker files: you can put a zip file containing your FID Bruker files: myinputs.zip (containing all your conditions as sub-directories).
-    | Zip file (recommended) of Jcamp-dx files: you can put a zip file containing your Jcamp-dx files: myinputs.zip (containing all your conditions as sub-directories).
+    | Zip file (recommended) of FID Bruker files: you can put a zip file containing your FID Bruker files: myinputs.zip.
 
 
 ----------
 Parameters
 ----------
 
-FID Title
-	| Line in the acqus file to find the FID title (name)
-	|
+FID Title line
+    | Line in the acqus file to find the FID title (name)
+    |
 
 subdirectories
-	| Organization of individual's files
-	| TRUE: will search inside subdirectories for FIDs and will merge them to have unique FID and info matrices.
-	|
+    | Organization of individual's files
+    | TRUE: will search inside subdirectories for FIDs and will merge them to have unique FID and info matrices.
+    |
+
+dirs_names
+    | Use the (sub)directories names as FID names?
+    |
+
 
 ------------
 Output files
 ------------
 
-dataMatrixOut.tsv
-	| tabular output
-	| Data matrix with n rows (samples) and p columns (time) containing the raw FIDs
-	|
+NMR_Read_dataMatrix
+    | tabular output
+    | Data matrix with n rows (samples) and p columns (time) containing the raw FIDs.
+    |
 
-sampleOut.pdf
-	| tabular output
-	| Data matrix with n rows (samples) containing the acquisition parameters
+NMR_Read_sampleMetadata
+    | tabular output
+    | Data matrix with n rows (samples) containing the acquisition parameters for each sample.
+    |
 
-logOut.tsv
-	| Text output
-	| Contains warnings
-	|
----------------------------------------------------
-
----------------
-Example
----------------
+NMR_Read_log
+    | Text output
+    | Contains warnings
+    |
 
 
-   </help>
-    
+NMR_Read_graph
+    | pdf output
+    | line plots of FID
+    |
+
+
+Creating the zip file
+-----------------------
+
+.. class:: warningmark you must use the 7Zip software (http://www.7-zip.org/) to zip under Windows.
+
+Must contain at least the following files for every sample: fid, acqu and acqus
+
+.. image:: ./static/images/ReadFids.png
+
+
+
+**Possible structure and parameters values:**
+
+
+(1) use title file and presence of sub-directories: set the FID Title line, subdirectories = TRUE,  dirs_names = FALSE
+(2) use title file and no sub-directories: set the FID Title line, subdirectories = FALSE,  dirs_names = FALSE
+(3) don't use title file and presence of sub-directories: subdirectories = TRUE,  dirs_names = TRUE
+(4) don't use title file and no sub-directories: subdirectories = FALSE,  dirs_names = TRUE
+
+
+@HELP_CHANGELOG@
+
+    </help>
+
+    <expand macro="citation" />
+
 </tool>
